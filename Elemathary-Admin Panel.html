@@ -1,0 +1,689 @@
+<html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Elemathary-Admin Panel</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-firestore-compat.js"></script>
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    </head>
+<body>
+    <script>
+        // Function to check if the URL contains "?edit=1"
+        function checkAddQueryParam() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const addParam = urlParams.get('add');
+    
+            if (addParam === '1') {
+                // Display a success message using SweetAlert
+                swal("Success", "Insert Successfully!", "success");
+            }
+        }
+    
+        // Call the function to check the URL parameters
+        checkAddQueryParam();
+    </script>
+    <script>
+        // Function to check if the URL contains "?edit=1"
+        function checkUpdateQueryParam() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const updateParam = urlParams.get('update');
+    
+            if (updateParam === '1') {
+                // Display a success message using SweetAlert
+                swal("Success", "Update Successfully!", "success");
+            }
+        }
+    
+        // Call the function to check the URL parameters
+        checkUpdateQueryParam();
+    </script>
+    <script>
+        // Function to check if the URL contains "?edit=1"
+        function checkDeleteQueryParam() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const deleteParam = urlParams.get('delete');
+    
+            if (deleteParam === '1') {
+                // Display a success message using SweetAlert
+                swal("Success", "Data moved to Archive!", "success");
+            }
+        }
+    
+        // Call the function to check the URL parameters
+        checkDeleteQueryParam();
+    </script>
+    <style>
+        /* CSS to float the ul element */
+        #dropdownList {
+            display: none;
+            position: absolute;
+            margin-top: 10px;
+            margin-left: 60px;
+            background: #34495E;
+            border-radius: 10px;
+            padding: 20px;
+            list-style: none;
+        }
+        #dropdownList li a{
+            text-decoration: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        li.active {             
+  font-weight: bold; 
+}
+#dropdownlist, li, a:hover
+{
+  color: #FF9F00;
+  text-decoration: none;
+  list-style-type: none;
+}
+    </style>
+
+    <!--container for the table of users database-->
+    <div class="container">
+        <div class="row mt-3" style="background-color: #58D68D ;">
+            <div class="col-lg-12 d-flex justify-content-between align-items-center">
+                <div class="namepage">
+                    <h2>User's Database</h2>
+                </div>
+
+                <!--for search bar-->
+                <input type="text" id="searchInput" placeholder="🔎 Search..."> 
+
+                <div class="mb-2">  <!--Selection for Grade (dropdown)-->
+                    <div class="row">
+
+                        <div class="col mt-2">
+                            <select id="grade-dropdown" style="border-radius: 10px; font-weight: 500;" class="form-control-sm">
+                                <option value="">Select Grade</option>
+                                <option value="1">Grade 1</option>
+                                <option value="2">Grade 2</option>
+                                <option value="3">Grade 3</option>
+                            </select>
+                        </div>
+                        <div class="col mt-2">
+                            <!-- Select for Section (dropdown) -->
+                            <select id="section-dropdown" style="border-radius: 10px; font-weight: 500;" class="form-control-sm">
+                                <option value="">Select Section</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            
+                        <div>   <!--Bar to moved from another page-->
+                            <a href="#" id="dropdownToggle" alt="Toggle Dropdown">
+                                <i class="fa fa-bars" aria-hidden="true" style="font-size: 30px; padding: 10px; color: #34495E; "></i>
+                            </a> 
+
+                            <ul id="dropdownList" style="display: none;">
+
+                                <li class="active"><a href="Elemathary-Admin Panel.html">User's Database</a></li>
+                                <hr>
+                                <li><a href="Elemath-Leaderboard.html">Leaderboard</a></li>
+                                <hr>
+                                <li><a href="Elemath-Teachers.html">Teacher's Database</a></li>
+                                <hr>
+                                <li><a href="Archive.html">Archive</a></li>
+                                <hr>
+                                <li><a id="logout" data-bs-toggle="modal" data-bs-target="#logoutModal">Log out</a></li>
+                            </ul>
+                            <script>
+                                $(document).ready(function () {           
+                                    $("#dropdownToggle").click(function (e) {
+                                        e.preventDefault();
+                                        $("#dropdownList").toggle();
+                                    });
+                                });
+                            </script>
+                                    <!--logout modal-->
+                        <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="logoutModalLabel">Log Out Confirmation</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                    Are you sure you want to log out?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <a href="Elemath-Admin Login.html" class="btn btn-primary">Log Out</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+        </div>
+        <hr>
+
+
+        <div class="row"> <!--Table-->
+            <div class="col-lg-12">
+                <div class="table-responsive">
+                    <table id="myTable1" class="table table-striped table-bordered text-center">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Grade</th> 
+                                <th>UserID</th>
+                                <th>LRN</th>
+                                <th>Username</th>
+                                <th>Section</th>
+                                <th>Teacher</th>
+                                <th>Control Center</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-table">
+                            <!-- lalabas yung data dito -->
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-end">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">
+                                    <li class="page-item" id="prevPage"><a class="page-link" href="#">Previous</a></li>
+                                    <li class="page-item" id="currentPage"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item" id="currentPage"><a class="page-link" href="#">2</a></li>
+                                    <!-- Add more page numbers here -->
+                                    <li class="page-item" id="nextPage"><a class="page-link" href="#">Next</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>   <!--For adding new records-->
+  <!--  <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="addRecordForm"> -->
+               <!-- <div class="modal-header">
+                    <h5 class="modal-title" id="addModalLabel">Add New Record</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="add-teacher" class="form-label">Teacher:</label>
+                        <input type="text" class="form-control" id="add-teacher" name="teacher">
+                    </div>
+                    <div class="mb-3">
+                        <label for="add-lrn" class="form-label">LRN:</label>
+                        <input type="text" class="form-control" id="add-lrn" name="lrn">
+                    </div>
+                    <div class="mb-3">
+                        <label for="add-grade" class="form-label">Grade:</label>
+                        <input type="number" class="form-control" id="add-grade" name="grade">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> -->
+    <!-- Button to trigger the edit modal -->
+    <!-- The Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Record</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <!-- Form for editing data -->
+                <form id="editForm">
+                    <div class="mb-3">
+                        <label for="edit-email" class="form-label">Email:</label>
+                        <input type="text" class="form-control" id="edit-email" name="email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-teacher" class="form-label">Teacher:</label>
+                        <input type="text" class="form-control" id="edit-teacher" name="teacher">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-username" class="form-label">Username:</label>
+                        <input type="text" class="form-control" id="edit-username" name="username">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-lrn" class="form-label">LRN:</label>
+                        <input type="text" class="form-control" id="edit-lrn" name="lrn">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-grade">Grade:</label>
+                        <select type="Number" class="form-control" id="edit-grade" name="grade" required>
+                            <option selected>--Select--</option>
+                            <option value="1">Grade 1</option>
+                            <option value="2">Grade 2</option>
+                            <option value="3">Grade 3</option>
+                        </select>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="edit-section">Section:</label>
+                        <select class="form-control" id="edit-section" name="section" required>
+                            <!-- Options will be dynamically added here -->
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="save-edit">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Firebase Script-->
+<script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAkQJZ0V9cru_ASGsKyPJkoDSuX7T1n3ws",
+            authDomain: "elemathary-f60bd.firebaseapp.com",
+            projectId: "elemathary-f60bd",
+            storageBucket: "elemathary-f60bd.appspot.com",
+            messagingSenderId: "340977021821",
+            appId: "1:340977021821:web:fab23da543c51bf0621214",
+            
+    };
+
+firebase.initializeApp(firebaseConfig); 
+const db = firebase.firestore();
+const collectionRef = db.collection("Users");
+
+const itemsPerPage = 10;
+let currentPage = 1;
+let data = []; // Define data globally to make it accessible to all functions
+
+function fetchDataAndDisplay() {
+    collectionRef.get().then((querySnapshot) => {
+        data = [];
+        querySnapshot.forEach((doc) => {
+            const documentData = doc.data();
+            if (documentData.DataValue === 1) {
+                data.push({ id: doc.id, ...documentData });
+            }
+        });
+        displayData(currentPage, data); // Display initial page
+    }).catch((error) => {
+        console.error("Error getting documents: ", error);
+    });
+}
+
+function updatePageNumbers(currentPage, maxPage) {
+  const paginationElement = document.querySelector(".pagination");
+  paginationElement.innerHTML = '';
+
+  const prevPageItem = createPaginationItem('Previous', () => {
+    if (currentPage > 1) {
+      displayData(currentPage - 1, data);
+    }
+  });
+  paginationElement.appendChild(prevPageItem);
+
+  for (let i = 1; i <= maxPage; i++) {
+    const pageItem = createPaginationItem(i, () => {
+      displayData(i, data);
+    });
+    if (i === currentPage) {
+      pageItem.classList.add('active');
+    }
+    paginationElement.appendChild(pageItem);
+  }
+
+  const nextPageItem = createPaginationItem('Next', () => {
+    if (currentPage < maxPage) {
+      displayData(currentPage + 1, data);
+    }
+  });
+  paginationElement.appendChild(nextPageItem);
+}
+
+function createPaginationItem(text, onClick) {
+  const pageItem = document.createElement("li");
+  pageItem.classList.add("page-item");
+  const pageLink = document.createElement("a");
+  pageLink.classList.add("page-link");
+  pageLink.href = "#";
+  pageLink.textContent = text;
+  pageLink.addEventListener("click", onClick);
+  pageItem.appendChild(pageLink);
+  return pageItem;
+}
+
+function displayData(page, data) {
+  const startIndex = (page - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const dataContainer = document.getElementById("data-table");
+  dataContainer.innerHTML = '';
+
+  for (let i = startIndex; i < endIndex && i < data.length; i++) {
+    const rowData = data[i];
+    const row = document.createElement("tr");
+
+    // Add cells and populate with data
+    const keys = ['UserEmail', 'UserGrade', 'UserID', 'UserLRN', 'UserName', 'UserSection', 'UserTeacher'];
+    keys.forEach(key => {
+      const cell = document.createElement("td");
+      cell.textContent = rowData[key];
+      row.appendChild(cell);
+    });
+        //Edit Button
+    const actionsCell = document.createElement("td");
+    actionsCell.style.width = '14%';
+    const editButton = document.createElement("button");
+    editButton.classList.add("btn", "btn-primary", "btn-sm"); // Add Bootstrap button classes
+    const editIcon = document.createElement("i");
+   // editIcon.classList.add("fa", "fa-pencil"); // Add Font Awesome icon classes (assuming you're using Font Awesome)
+    editButton.appendChild(editIcon);
+    editButton.appendChild(document.createTextNode(" Edit"));
+    editButton.addEventListener("click", () => editRow(rowData.id, rowData)); // Pass the document ID and data to the edit function
+
+        //Delete Button
+    const deleteButton = document.createElement("button");
+    deleteButton.classList.add("btn", "btn-danger", "btn-sm"); // Add Bootstrap button classes
+    const deleteIcon = document.createElement("i");
+   // deleteIcon.classList.add("fa", "fa-trash"); // Add Font Awesome icon classes (assuming you're using Font Awesome)
+    deleteButton.appendChild(deleteIcon);
+    deleteButton.appendChild(document.createTextNode("Archive"));
+    deleteButton.addEventListener("click", () => updateRow(rowData.id)); // Pass the document ID to the delete function
+
+    editButton.style.marginRight = "5px";
+    deleteButton.style.marginRight = "5px";
+
+    actionsCell.appendChild(editButton);
+    actionsCell.appendChild(deleteButton);
+    row.appendChild(actionsCell);
+
+    dataContainer.appendChild(row);
+  }
+
+  updatePageNumbers(page, Math.ceil(data.length / itemsPerPage));
+}
+
+function editRow(documentId, data) {
+  // Populate the edit modal fields with the existing data
+  document.getElementById("edit-email").value = data.UserEmail;
+  document.getElementById("edit-teacher").value = data.UserTeacher;
+  document.getElementById("edit-username").value = data.UserName;
+  document.getElementById("edit-lrn").value = data.UserLRN;
+  document.getElementById("edit-section").value = data.UserSection;
+  document.getElementById("edit-grade").value = data.UserGrade;
+
+  // Show the edit modal
+  const editModal = new bootstrap.Modal(document.getElementById("editModal"));
+  editModal.show();
+
+  const saveEditButton = document.getElementById("save-edit");
+  saveEditButton.addEventListener("click", () => {
+    // Get the edited values from the edit modal inputs
+    const editedEmail = document.getElementById("edit-email").value;
+    const editedTeacher = document.getElementById("edit-teacher").value;
+    const editedUsername = document.getElementById("edit-username").value;
+    const editedLrn = document.getElementById("edit-lrn").value;
+    const editedSection = document.getElementById("edit-section").value;
+    const editedGrade = document.getElementById("edit-grade").value;
+
+    const editedData = {
+      UserEmail: editedEmail,
+      UserTeacher: editedTeacher,
+      UserName: editedUsername,
+      UserLRN: editedLrn,
+      UserSection: editedSection,
+      UserGrade: parseInt(editedGrade),
+    };
+
+    // Update the Firestore document
+    collectionRef.doc(documentId).update(editedData)
+      .then(() => {
+        console.log("Document successfully updated!");
+
+        // Close the edit modal
+        editModal.hide();
+
+        // Display a success notification
+        Swal.fire('Updated!', 'Your record has been updated.', 'success');
+
+        // Refresh the table
+        fetchDataAndDisplay();
+      })
+      .catch((error) => {
+        console.error("Error updating document: ", error);
+        // Display an error notification if update fails
+        Swal.fire('Error!', 'An error occurred while updating the record.', 'error');
+      });
+  });
+}
+
+
+function updateRow(documentId) {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: 'You are about to move this record to Archive.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Update the DataValue to 0
+      const updatedData = { DataValue: 0 };
+
+      collectionRef.doc(documentId).update(updatedData)
+        .then(() => {
+          console.log("Document successfully moved to Archive!");
+
+          // Display success notification here
+          Swal.fire('Updated!', 'Your record has been moved to Archive.', 'success');
+
+          // Refresh the table
+          fetchDataAndDisplay();
+        })
+        .catch((error) => {
+          console.error("Error updating document: ", error);
+
+          // Display an error notification if update fails
+          Swal.fire('Error!', 'An error occurred while updating the record.', 'error');
+        });
+    }
+  });
+}
+
+function updatePageNumbers(currentPage, maxPage) {
+  const paginationElement = document.querySelector(".pagination");
+  paginationElement.innerHTML = '';
+
+  const prevPageItem = createPaginationItem('Previous', () => {
+    if (currentPage > 1) {
+      displayData(currentPage - 1, data);
+    }
+  });
+  paginationElement.appendChild(prevPageItem);
+
+  for (let i = 1; i <= maxPage; i++) {
+    const pageItem = createPaginationItem(i, () => {
+      displayData(i, data);
+    });
+    if (i === currentPage) {
+      pageItem.classList.add('active');
+    }
+    paginationElement.appendChild(pageItem);
+  }
+
+  const nextPageItem = createPaginationItem('Next', () => {
+    if (currentPage < maxPage) {
+      displayData(currentPage + 1, data);
+    }
+  });
+  paginationElement.appendChild(nextPageItem);
+}
+
+function createPaginationItem(text, onClick) {
+  const pageItem = document.createElement("li");
+  pageItem.classList.add("page-item");
+  const pageLink = document.createElement("a");
+  pageLink.classList.add("page-link");
+  pageLink.href = "#";
+  pageLink.textContent = text;
+  pageLink.addEventListener("click", onClick);
+  pageItem.appendChild(pageLink);
+  return pageItem;
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  fetchDataAndDisplay();
+});
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+<!--script for grade and section(dropdown)-->
+<script>
+    $(document).ready(function() {
+        // Define section options based on grade
+        const sectionOptions = {
+            1: ["--Select Section--", "Matapat", "Masunurin"],
+            2: ["--Select Section--", "Mangga", "Santol"],
+            3: ["--Select Section--", "Diamond", "Jade"]
+        };
+
+        // Cache the section select element
+        const sectionSelect = $("#edit-section");
+
+        // Function to update section options based on the selected grade
+        $("#edit-grade").change(function() {
+            const selectedGrade = $(this).val();
+
+            // Clear previous options
+            sectionSelect.empty();
+
+            // Add new options based on the selected grade
+            if (selectedGrade in sectionOptions) {
+                sectionOptions[selectedGrade].forEach(function(section) {
+                    // Append new option elements as strings
+                    sectionSelect.append(`<option value="${section}">${section}</option>`);
+                });
+            } else {
+                sectionSelect.append('<option value="">Select a Grade first</option>');
+            }
+        });
+    });
+</script>
+
+<script> //script for dropdown
+    document.getElementById("grade-dropdown").addEventListener("change", filterData);
+    document.getElementById("section-dropdown").addEventListener("change", filterData);
+    
+    function filterData() {
+        const selectedGrade = document.getElementById("grade-dropdown").value;
+        const selectedSection = document.getElementById("section-dropdown").value;
+        const tableRows = document.querySelectorAll("#data-table tr");
+    
+        tableRows.forEach(function (row) { // Assuming the "Game Mode" cell is at index 0
+            const gradeCell = row.cells[1]; // Assuming the "Grade" cell is at index 1
+            const sectionCell = row.cells[5]; // Assuming the "Section" cell is at index 2
+    
+
+            const gradeMatches = selectedGrade === "" || gradeCell.textContent === selectedGrade;
+            const sectionMatches = selectedSection === "" || sectionCell.textContent === selectedSection;
+    
+            if (gradeMatches && sectionMatches) {
+                row.style.display = ""; // Show the row
+            } else {
+                row.style.display = "none"; // Hide the row
+            }
+        });
+    }
+    </script>
+
+    
+    <script>
+    // Get references to the grade and section dropdowns
+    const gradeDropdown = document.getElementById("grade-dropdown");
+    const sectionDropdown = document.getElementById("section-dropdown");
+
+    // Define the section options for each grade
+    const sectionOptions = {
+        "1": ["Matapat", "Masunurin"],
+        "2": ["Mangga", "Santol"],
+        "3": ["Diamond", "Jade"],
+    };
+
+    // Function to update the section dropdown based on the selected grade
+    function updateSectionOptions() {
+        const selectedGrade = gradeDropdown.value;
+        const sections = sectionOptions[selectedGrade] || [];
+
+        // Clear existing options
+        sectionDropdown.innerHTML = '<option value="">Select Section</option>';
+
+        // Add new section options
+        sections.forEach(section => {
+            const option = document.createElement("option");
+            option.value = section;
+            option.textContent = section;
+            sectionDropdown.appendChild(option);
+        });
+    }
+
+    // Add an event listener to the grade dropdown to update the section dropdown
+    gradeDropdown.addEventListener("change", updateSectionOptions);
+
+    // Initialize the section dropdown with the default options
+    updateSectionOptions();
+</script>
+
+<!--Script for search bar-->
+<script >
+    document.getElementById("searchInput").addEventListener("input", () => {
+const searchInput = document.getElementById("searchInput").value.trim().toLowerCase();
+filterTable(searchInput);
+});
+
+function filterTable(searchText) {
+const tableRows = document.querySelectorAll("#data-table tr");
+
+tableRows.forEach((row, index) => {
+    if (index === 0) {
+        // Skip the header row
+        return;
+    }
+
+    const emailCell = row.querySelector("td:nth-child(1)"); // Assuming Email is the first column (0-based index)
+    if (emailCell) {
+        const emailText = emailCell.textContent.toLowerCase();
+        if (emailText.includes(searchText)) {
+            row.style.display = "table-row";
+        } else {
+            row.style.display = "none";
+        }
+    }
+});
+}
+</script>
+</body>
+</html>

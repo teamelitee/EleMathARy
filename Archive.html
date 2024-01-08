@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archive</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-firestore-compat.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+</head>
+
+<script> //Script for updatealert message
+    $(document).ready(function () {
+        function checkUpdateQueryParam() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const updateParam = urlParams.get('update');
+
+            if (updateParam === '1') {
+                // Display a success message using SweetAlert
+                swal("Success", "Updated Successfully!", "success");
+            }
+        }
+        checkUpdateQueryParam();
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        function checkUpdateQueryParam() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const updateParam = urlParams.get('delete');
+
+            if (updateParam === '1') {
+                // Display a success message using SweetAlert
+                swal("Success", "Deleted Successfully!", "success");
+            }
+        }
+        checkUpdateQueryParam();
+    });
+</script>
+
+<body>
+
+    <style>
+        
+        /* CSS to float the ul element */
+        #dropdownList {
+            display: none;
+            position: absolute;
+            margin-top: 10px;
+            margin-left: 60px;
+            background: #34495E;
+            border-radius: 10px;
+            padding: 20px;
+            list-style: none;
+        }
+        #dropdownList li a{
+            text-decoration: none;
+            color: white;
+            cursor: pointer;
+        }
+        li.active {             
+  font-weight: bold; 
+}
+#dropdownlist, li, a:hover
+{
+  color: #FF9F00;
+  text-decoration: none;
+  list-style-type: none;
+}
+    </style>
+
+
+<!--Container for the table of teachers database-->
+<div class="container"> 
+    <div class="row mt-3" style="background-color: #58D68D ;">
+        <div class="col-lg-12 d-flex justify-content-between align-items-center">
+            <div class="namepage">
+                <h2>Archive</h2>
+            </div>
+
+            
+            <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form id="addRecordForm">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addModalLabel">Add New Record</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="add-teacherfname" class="form-label">First Name:</label>
+                                    <input type="text" class="form-control" id="add-teacher" name="teacherfname">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="add-teachermname" class="form-label">Middle Initial:</label>
+                                    <input type="text" class="form-control" id="add-teachermname" name="teachermname">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="add-teacherlname" class="form-label">Last Name:</label>
+                                    <input type="text" class="form-control" id="add-teacherlname" name="teacherlname">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="add-grade" class="form-label">Grade:</label>
+                                    <input type="number" class="form-control" id="add-grade" name="grade">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="add-section" class="form-label">Section:</label>
+                                    <input type="text" class="form-control" id="add-section" name="section">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div>   <!--Bar to moved from another page-->
+                <a href="#" id="dropdownToggle" alt="Toggle Dropdown">
+                    <i class="fa fa-bars" aria-hidden="true" style="font-size: 30px; padding: 10px; color: #34495E; "></i>
+                </a> 
+
+                <ul id="dropdownList" style="display: none;">
+
+                    <li class="active"><a href="Archive.html">Archive</a></li>
+                    <hr>
+                    <li><a href="Elemath-Teachers.html">Teacher's Database</a></li>
+                    <hr>
+                    <li><a href="Elemathary-Admin Panel.html">User's Database</a></li>
+                    <hr>
+                    <li><a href="Elemath-Leaderboard.html">Leaderboard</a></li>
+                    <hr>
+                    <li><a id="logout" data-bs-toggle="modal" data-bs-target="#logoutModal">Log out</a></li>
+                </ul>
+                <script>
+                    $(document).ready(function () {           
+                        $("#dropdownToggle").click(function (e) {
+                            e.preventDefault();
+                            $("#dropdownList").toggle();
+                        });
+                    });
+                </script>
+                        <!--logout modal-->
+            <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="logoutModalLabel">Log Out Confirmation</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                        Are you sure you want to log out?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <a href="Elemath-Admin Login.html" class="btn btn-primary">Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="table-responsive">
+                <table id="myTable1" class="table table-striped table-bordered text-center">
+                    <thead>
+                        <tr> <!--laman ng table ng teachers database-->
+                            <th>Teacher Grade</th>
+                            <th>Teacher First Name</th>
+                            <th>Teacher Middle Initial</th>
+                            <th>Teacher Last Name</th>
+                            <th>Teacher Section</th>
+                            <th>Teacher Username</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-table">
+                        <!-- lalabas yung data dito -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Editing Teacher Records -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Record</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <!-- Form for editing data -->
+                <form id="editForm">
+                    <div class="mb-3">
+                        <label for="edit-fname" class="form-label">First Name:</label>
+                        <input type="text" class="form-control" id="edit-fname" name="fname">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit-mname" class="form-label">Middle Initial:</label>
+                        <input type="text" class="form-control" id="edit-mname" name="mname">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit-lname" class="form-label">Last Name:</label>
+                        <input type="text" class="form-control" id="edit-lname" name="lname">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-teacher">Grade:</label>
+                        <select type="Number" class="form-control" id="edit-teacher" name="grade" required>
+                            <option selected>--Select--</option>
+                            <option value="1">Grade 1</option>
+                            <option value="2">Grade 2</option>
+                            <option value="3">Grade 3</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit-section">Section:</label>
+                        <select class="form-control" id="edit-section" name="section" required>
+                            <!-- Options will be dynamically added here -->
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="save-edit">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Firebase Script -->
+<script>
+    // Initialize Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyAkQJZ0V9cru_ASGsKyPJkoDSuX7T1n3ws",
+        authDomain: "elemathary-f60bd.firebaseapp.com",
+        projectId: "elemathary-f60bd",
+        storageBucket: "elemathary-f60bd.appspot.com",
+        messagingSenderId: "340977021821",
+        appId: "1:340977021821:web:fab23da543c51bf0621214"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const collectionRef = firebase.firestore().collection("Teachers");
+
+    function fetchDataAndDisplay() {
+    const tableBody = document.getElementById("data-table");
+
+    collectionRef.get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const docId = doc.id;
+
+            // Add a condition to check if DataValue is equal to 1
+            if (data["DataValue"] === 0) {
+                const row = tableBody.insertRow(-1);
+                const gradeCell = row.insertCell(0);
+                const teacherFirstNameCell = row.insertCell(1);
+                const teacherMiddleInitial = row.insertCell(2);
+                const teacherLastName = row.insertCell(3);
+                const sectionCell = row.insertCell(4);
+                const usernameCell = row.insertCell(5);
+
+                gradeCell.textContent = data["TeacherGrade"];
+                teacherFirstNameCell.textContent = data["TeacherFirstName"];
+                teacherMiddleInitial.textContent = data["TeacherMiddleInitial"];
+                teacherLastName.textContent = data["TeacherLastName"];
+                sectionCell.textContent = data["TeacherSection"];
+                usernameCell.textContent = data["TeacherUsername"];
+
+                // Edit button
+                //const editButton = document.createElement("button");
+                //editButton.classList.add("btn", "btn-primary");
+                //editButton.appendChild(document.createTextNode("Edit"));
+                //editButton.addEventListener("click", () => editRow(docId, data));
+                //editButton.style.marginRight = "5px";
+
+                // Delete button
+                //const deleteButton = document.createElement("button");
+                //deleteButton.classList.add("btn", "btn-danger");
+                //deleteButton.appendChild(document.createTextNode("Delete"));
+                //deleteButton.addEventListener("click", () => deleteRow(docId));
+                //deleteButton.style.marginRight = "5px";
+
+                // Add buttons to the actions cell
+                //actionsCell.appendChild(editButton);
+                //actionsCell.appendChild(deleteButton);
+            }
+        });
+    }).catch((error) => {
+        console.error("Error getting documents: ", error);
+    });
+}
+
+    document.getElementById("addRecordForm").addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+
+        // Get values from the form
+        const teacherFirstName = document.getElementById("add-teacher").value;
+        const teacherMiddleInitial = document.getElementById("add-teachermname").value;
+        const teacherLastName = document.getElementById("add-teacherlname").value;
+        const teacherGrade = document.getElementById("add-grade").value;
+        const teacherSection = document.getElementById("add-section").value;
+
+        const newData = {
+            TeacherFirstName: teacherFirstName,
+            TeacherMiddleInitial: teacherMiddleInitial,
+            TeacherLastName: teacherLastName,
+            TeacherGrade: teacherGrade,
+            TeacherSection: teacherSection,
+        };
+
+        // Add the new data to Firestore
+        collectionRef.add(newData)
+            .then((docRef) => {
+                console.log("Document written with ID: ", docRef.id);
+                window.location.href = 'Elemath-Teachers.html?add=1';
+            })
+            .catch((error) => {
+                console.error("Error adding document: ", error);
+            });
+    });
+
+
+
+    function editRow(docId, data) {
+        // Populate the modal fields with the data
+        document.getElementById("edit-fname").value = data["TeacherFirstName"];
+        document.getElementById("edit-mname").value = data["TeacherMiddleInitial"];
+        document.getElementById("edit-lname").value = data["TeacherLastName"];
+        document.getElementById("edit-teacher").value = data["TeacherGrade"];
+        document.getElementById("edit-section").value = data["TeacherSection"];
+
+        // Show the modal for editing
+        const editModal = new bootstrap.Modal(document.getElementById("editModal"));
+        editModal.show();
+
+        // Add an event listener to the "Save Changes" button in the modal
+        const saveEditButton = document.getElementById("save-edit");
+        saveEditButton.addEventListener("click", () => {
+            // Get the edited values from the modal
+            const editedFirstName = document.getElementById("edit-fname").value;
+            const editedMiddleInitial = document.getElementById("edit-mname").value;
+            const editedLastName = document.getElementById("edit-lname").value;
+            const editedTeacher = document.getElementById("edit-teacher").value;
+            const editedSection = document.getElementById("edit-section").value;
+
+            const updatedData = {
+            TeacherFirstName: editedFirstName,
+            TeacherMiddleInitial: editedMiddleInitial,
+            TeacherLastName: editedLastName,
+            TeacherGrade: editedTeacher,
+            TeacherSection: editedSection,
+        };
+
+        collectionRef.doc(docId).update(updatedData).then(() => {
+            console.log("Document successfully updated!");
+
+            window.location.href = 'Elemath-Teachers.html?update=1';
+        }).catch((error) => {
+            console.error("Error updating document: ", error);
+        });
+            editModal.hide();
+        });
+    }
+    
+    function deleteRow(documentId) {
+            if (confirm("Are you sure you want to delete this record?")) {
+                collectionRef.doc(documentId).delete()
+                .then(() => {
+                    console.log("Document successfully deleted!");
+                    window.location.href = 'Elemath-Teachers.html?delete=1';
+                })
+                .catch((error) => {
+                    console.error("Error deleting document: ", error);
+                });
+            }
+        }
+
+
+fetchDataAndDisplay();
+</script>
+
+<!--script for grade and section (dropdown)-->
+<script>
+    $(document).ready(function() {
+        // Define section options based on grade
+        const sectionOptions = {
+            1: ["--Select Section--", "Matapat", "Masunurin"],
+            2: ["--Select Section--", "Mangga", "Santol"],
+            3: ["--Select Section--", "Diamond", "Jade"]
+        };
+
+        // Cache the section select element
+        const sectionSelect = $("#edit-section");
+
+        // Function to update section options based on the selected grade
+        $("#edit-teacher").change(function() {
+            const selectedGrade = $(this).val();
+
+            // Clear previous options
+            sectionSelect.empty();
+
+            // Add new options based on the selected grade
+            if (selectedGrade in sectionOptions) {
+                sectionOptions[selectedGrade].forEach(function(section) {
+                    // Append new option elements as strings
+                    sectionSelect.append(<option value="${section}">${section}</option>);
+                });
+            } else {
+                sectionSelect.append('<option value="">Select a Grade first</option>');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

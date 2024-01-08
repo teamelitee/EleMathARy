@@ -1,0 +1,408 @@
+<html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatble" content="IE-edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Elemath-Admin Login</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+        <link rel="stylesheet" href="style.css">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-firestore-compat.js"></script>
+       
+       <script>
+
+            var firebaseConfig = {
+                apiKey: "AIzaSyAkQJZ0V9cru_ASGsKyPJkoDSuX7T1n3ws",
+                authDomain: "elemathary-f60bd.firebaseapp.com",
+                projectId: "elemathary-f60bd",
+                storageBucket: "elemathary-f60bd.appspot.com",
+                messagingSenderId: "340977021821",
+                appId: "1:340977021821:web:fab23da543c51bf0621214"
+            };
+        
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+            var firestore = firebase.firestore();
+        </script>
+
+        <link rel="stylesheet" href="style.css">
+        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    </head>
+
+
+    <script>
+        $(document).ready(function () {
+            function checkUpdateQueryParam() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const updateParam = urlParams.get('update');
+
+                if (updateParam === '1') {
+                    // Display a success message using SweetAlert
+                    swal("Success", "Registered Successfully!", "success");
+                }
+            }
+            checkUpdateQueryParam();
+        });
+    </script>
+
+    <body>
+
+
+        <style>
+            .falling-image {
+                animation: fall 3s ease-in-out; /* No need to specify iteration count for one-time animation */
+            }
+            .middle-top {
+                position: absolute;
+                top: -50px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+
+            @keyframes fall {
+                0% {
+                    transform: translateY(-200px); /* Start above the visible area */
+                }
+                100% {
+                    transform: translateY(0); /* Stop at the original position */
+                }
+            }
+            .eye-icon {
+                  position: absolute;
+                                    right: -170px;
+                                    top: 30px;
+                                    transform: translateY(-50%);
+                                    color: #808080; /* Gray color */
+                                    cursor: pointer;
+                                }
+                                
+                                .eye-icon i {
+                                    transition: color 0.3s; /* Smooth color transition */
+                                }
+                                
+                                .eye-icon i.active {
+                                    color: blue; /* Change color to blue when active */
+                                }
+                                
+                                #password {
+                                    padding-right: 100px; /* Adjust padding to accommodate the icon */
+                                    position: relative; /* Set input as a reference for absolute positioning */
+                                }
+        </style>
+            <div class="text-center">
+                <div class="middle-top">
+                    <img src="12345.png" class="falling-image" style="max-width: 50%; max-height: 50%;">
+                </div>
+            </div>
+                <div class="container">
+                    <div class="forms-container">
+                        <div class="form-control signup-form">
+                            <form> <!--For Teacher's Login Form-->
+                                <h2>Teacher</h2>
+                                <input type="text" placeholder="Username" id="uname" name="uname" required />
+                                <div style="position: relative; width: 100px;">
+                                    <input type="password" id="pass" name="pass" placeholder="Password" required style="width: 280px;">
+                                    <span class="eye-icon" onclick="togglePasswordT()">
+                                        <i class="fas fa-eye" id="eyeIcon"></i>
+                                    </span>
+                                </div>
+                                <input type="button" class="btn" value="Login" onclick="teachers()">
+                            </form>
+                            <script>
+                                function togglePasswordT() {
+                                    const passwordField = document.getElementById("pass");
+                                    const eyeIcon = document.getElementById("eyeIcon");
+                                    
+                                    if (passwordField.type === "password") {
+                                        passwordField.type = "text";
+                                        eyeIcon.classList.add("active");
+                                    } else {
+                                        passwordField.type = "password";
+                                        eyeIcon.classList.remove("active");
+                                    }
+                                }
+                            </script>
+
+
+                        </div>
+
+                        <!--For Admin's Login form-->
+                        <div class="form-control signin-form">
+                            <form action="#">
+                                <h2>Admin</h2>
+                                <input type="text" id="username" name="username" placeholder="Username" required>
+                                <div style="position: relative; width: 100px;">
+                                    <input type="password" id="password" name="password" placeholder="Password" required style="width: 280px;">
+                                    <span class="eye-icon" onclick="togglePassword()">
+                                        <i class="fas fa-eye" id="eyeIcon"></i>
+                                    </span>
+                                </div>
+                                <input type="button" class="btn" value="Login" onclick="login()">
+                                <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">Registration for Teachers</button>
+                            </form>
+
+                            <script>
+                                function togglePassword() {
+                                    const passwordField = document.getElementById("password");
+                                    const eyeIcon = document.getElementById("eyeIcon");
+                                    
+                                    if (passwordField.type === "password") {
+                                        passwordField.type = "text";
+                                        eyeIcon.classList.add("active");
+                                    } else {
+                                        passwordField.type = "password";
+                                        eyeIcon.classList.remove("active");
+                                    }
+                                }
+                            </script>
+
+                        </div>
+                    </div>
+                    
+                    <div class="intros-container">
+                        <div class="intro-control signin-intro">
+                            <div class="intro-control__inner">
+                                <img src="logo.png" style="height: 200px; width: 200px;">
+                                <h2>Welcome Admin!</h2>
+                                <button id="signup-btn">For Teacher's Login</button>
+                            </div>
+                        </div>
+                        <div class="intro-control signup-intro">
+                            <div class="intro-control__inner">
+                                <img src="logo.png" style="height: 200px; width: 200px;">
+                                <h2>Welcome Teacher!</h2>
+                                <button id="signin-btn">For Admin's Login</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+<script  src="./script.js"></script>
+
+        <div class="modal fade" id="myModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Registration for Teachers</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+            
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <form id="registrationForm"> <!-- Added the "id" attribute to the form -->
+                            <div class="form-group">
+                                <label for="fname">First Name:</label>
+                                <input type="text" class="form-control" id="fname" name="fname" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="mname">Middle Initial:</label>
+                                <input type="text" class="form-control" id="mname" name="mname" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="lname">Last Name:</label>
+                                <input type="text" class="form-control" id="lname" name="lname" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="username">Username:</label>
+                                <input type="text" class="form-control" id="username" name="username" required>
+                            </div>
+        
+                            <div class="form-group">
+                                <label for="password">Password:</label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
+        
+                            <div class="form-group">
+                                <label for="grade">Grade:</label>
+                                <select type="Number" class="form-control" id="grade" name="grade" required>
+                                    <option selected>--Select--</option>
+                                    <option value="1">Grade 1</option>
+                                    <option value="2">Grade 2</option>
+                                    <option value="3">Grade 3</option>
+                                </select>
+                            </div>
+        
+                            <div class="form-group">
+                                <label for="section">Section:</label>
+                                <select class="form-control" id="section" name="section" required>
+                                <!-- Empty default option -->
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+
+
+    <script >
+        function login() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            var usersRef = firestore.collection("AdminCollection");
+
+            usersRef
+            .where("username", "==", username)
+            .where("password", "==", password)
+            .get()
+            .then(function(querySnapshot) {
+                if (!querySnapshot.empty) {
+                
+                    window.location.href = "Elemath-Teachers.html";
+                    } else {
+                    showErrorPopup();
+                    }
+                })
+            .catch(function(error) {
+                console.error("Error fetching user data:", error);
+            });
+        }
+
+        function showErrorPopup() {
+    
+            var sweetAlertScript = document.createElement("script");
+            sweetAlertScript.src = "https://unpkg.com/sweetalert/dist/sweetalert.min.js";
+            sweetAlertScript.onload = function() {
+        
+                swal("Sorry, Try Again.", "Incorrect Email or Password!", "error");
+            };
+            document.head.appendChild(sweetAlertScript);
+        }
+    
+    </script>
+    
+
+    <script>
+    function teachers() {
+    var username = document.getElementById("uname").value;
+    var password = document.getElementById("pass").value;
+
+    // Check if the username and password fields are empty
+    if (username.trim() === "" || password.trim() === "") {
+        // Display an error message or prevent form submission
+        showErrorPopup("Please enter both username and password.");
+        return; // Return early to prevent further execution
+    }
+
+    var usersRef = firestore.collection("Teachers");
+//login for teachers account
+    usersRef
+    .where("TeacherUsername", "==", username)
+    .where("TeacherPassword", "==", password) 
+    .get()
+    .then(function(querySnapshot) {
+        if (!querySnapshot.empty) {
+            window.location.href = "Elemathary-AdminPanel(Teacher).html";
+        } else {
+            showErrorPopup("Incorrect username or password.");
+        }
+    })
+    .catch(function(error) {
+        console.error("Error fetching user data:", error);
+    });
+}
+//pag mali yung password/email lalabas ang alert message na to
+    function showErrorPopup() {
+        var sweetAlertScript = document.createElement("script");
+        sweetAlertScript.src = "https://unpkg.com/sweetalert/dist/sweetalert.min.js";
+        sweetAlertScript.onload = function() {
+            swal("Sorry, Try Again.", "Incorrect Email or Password!", "error");
+        };
+        document.head.appendChild(sweetAlertScript);
+    }
+</script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <script>
+    $(document).ready(function() {
+        // Define section options based on grade
+        const sectionOptions = {
+            1: ["--Select Section--", "Matapat", "Masunurin"],
+            2: ["--Select Section--", "Mangga", "Santol"],
+            3: ["--Select Section--", "Diamond", "Jade"]
+        };
+
+        // Function to update section options based on the selected grade
+        $("#grade").change(function() {
+            const selectedGrade = $(this).val();
+            const sectionSelect = $("#section");
+
+            // Clear previous options
+            sectionSelect.empty();
+
+            // Add new options based on the selected grade
+            if (selectedGrade in sectionOptions) {
+                sectionOptions[selectedGrade].forEach(function(section) {
+                    sectionSelect.append(`<option value="${section}">${section}</option>`);
+                });
+            } else {
+                sectionSelect.append(`<option value="">Select a Grade first</option>`);
+            }
+        });
+    });
+</script>
+
+<!--registration for teachers to create an account-->
+<script>
+    const registrationForm = document.getElementById("registrationForm");
+    registrationForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const fname = registrationForm.querySelector("#fname").value;
+        const mname = registrationForm.querySelector("#mname").value;
+        const lname = registrationForm.querySelector("#lname").value;
+        const username = registrationForm.querySelector("#username").value;
+        const password = registrationForm.querySelector("#password").value;
+        const grade = registrationForm.querySelector("#grade").value;
+        const section = registrationForm.querySelector("#section").value;
+
+        // Define 'collectionRef' with the reference to your Firestore collection (e.g., "teachers" in your case).
+        // Make sure to initialize 'collectionRef' similar to how you initialized 'firestore' in your Firebase setup.
+
+        const collectionRef = firestore.collection("Teachers"); // Update "teachers" with your actual Firestore collection name.
+
+        const newRecord = {
+            TeacherFirstName: fname,
+            TeacherMiddleInitial: mname,
+            TeacherLastName: lname,
+            TeacherUsername: username,
+            TeacherPassword: password,
+            TeacherGrade: grade,
+            TeacherSection: section,
+        };
+
+        // Add the new record to your Firestore collection.
+        collectionRef.add(newRecord)
+            .then((docRef) => {
+                console.log("New record added with ID: ", docRef.id);
+
+                // Rest of your code, such as showing/hiding the modal, resetting the form, and fetching/displaying data.
+
+                // Redirect to your admin panel or any other desired page.
+                window.location.href = 'Elemath-Admin Login.html?add=1';
+            })
+            .catch((error) => {
+                console.error("Error adding document: ", error);
+            });
+    });
+</script>
+</html>

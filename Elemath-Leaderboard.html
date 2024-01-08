@@ -1,0 +1,406 @@
+<html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Elemath-Leaderboard</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-firestore-compat.js"></script>
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Signika+Negative:wght@400;500;600;700&display=swap" rel="stylesheet">
+    </head>
+<body>
+    
+    <style>
+        /* CSS to float the ul element */
+        #dropdownList {
+            display: none;
+            position: absolute;
+            margin-top: 10px;
+            margin-left: 300px;
+            background: #34495E;
+            border-radius: 10px;
+            padding: 20px;
+            list-style: none;
+        }
+        #dropdownList li a{
+            text-decoration: none;
+            color: white;
+            cursor: pointer;
+        }
+        li.active {             
+  font-weight: bold; 
+}
+    </style>
+
+    <div class="container">
+        <div class="row mt-3" style="background-color: #58D68D;">
+            <div class="col-lg-12 d-flex justify-content-between align-items-center">
+                <div class="namepage">
+                    <h2>Leaderboard</h2>
+                </div>
+    
+                <div>
+                    <!-- Selection for Game Mode (dropdown) -->
+                        <select id="game-mode-dropdown" style="border-radius: 10px; font-weight: 500;" class="form-control-sm">
+                            <option value="">Select Game Mode</option>
+                            <option value="Simple Mode">Simple Mode</option>
+                            <option value="Adventure Mode">Adventure Mode</option>
+                        </select>
+                    </div>
+
+                <div class="mb-2">  <!--Selection for Grade (dropdown)-->
+                    
+                        <select id="grade-dropdown" style="border-radius: 10px; font-weight: 500;" class="form-control-sm">
+                            <option value="">Select Grade</option>
+                            <option value="1">Grade 1</option>
+                            <option value="2">Grade 2</option>
+                            <option value="3">Grade 3</option>
+                        </select>
+                    
+                    
+                        <!-- Select for Section (dropdown) -->
+                        <select id="section-dropdown" style="border-radius: 10px; font-weight: 500;" class="form-control-sm">
+                            <option value="">Select Section</option>
+                        </select>
+                    
+
+                   <!--Bar to moved from another page-->
+                    <a href="#" id="dropdownToggle" alt="Toggle Dropdown">
+                        <i class="fa fa-bars" aria-hidden="true" style="font-size: 30px; padding: 10px; color: #34495E;"></i>
+                    </a> 
+
+                    <ul id="dropdownList" style="display: none;">
+
+                        <li class="active"><a href="Elemath-Leaderboard.html">Leaderboard</a></li>
+                        <hr>
+                        <li><a href="Elemath-Teachers.html">Teacher's Database</a></li>
+                        <hr>
+                        <li><a href="Elemathary-Admin Panel.html">User's Database</a></li>
+                        <hr>
+                        <li><a id="logout" data-bs-toggle="modal" data-bs-target="#logoutModal">Log out</a></li>
+                    </ul>
+                    <!--Logout-->
+                    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="logoutModalLabel">Log Out Confirmation</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                Are you sure you want to log out?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <a href="Elemath-Admin Login.html" class="btn btn-primary">Log Out</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        $(document).ready(function () {
+                            $("#dropdownToggle").click(function (e) {
+                                e.preventDefault();
+                                $("#dropdownList").toggle();
+                            });
+                        });
+                    </script>  
+                </div>    
+            </div>
+        </div>
+        <hr>
+        <div class="row"> <!--table-->
+            <div class="col-lg-12">
+                <div class="table-responsive">
+                    <div class="col-lg-12 d-flex justify-content-between align-items-center">
+                                <div class="namepage">
+                                    <h2></h2>
+                                </div>
+                                   
+                            </div>
+                    <div class="container">
+                        <table id="myTable1" class="table table-striped table-bordered text-center">
+                            <thead>
+                                <tr>
+                                    <th>Game Mode</th>
+                                    <th>Grade</th>
+                                    <th>Section</th>
+                                    <th>Player's Name</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody id="data-table">
+                                <!-- Data will be displayed here -->
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-end">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">
+                                    <li class="page-item" id="prevPage"><a class="page-link" href="#">Previous</a></li>
+                                    <li class="page-item" id="currentPage"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item" id="currentPage"><a class="page-link" href="#">2</a></li>
+                                    <!-- Add more page numbers here -->
+                                    <li class="page-item" id="nextPage"><a class="page-link" href="#">Next</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    $(document).ready(function () {
+        const sampleData = [];
+        const itemsPerPage = 10;
+        let currentPage = 1;
+
+        const displayData = (currentPage) => {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const dataContainer = document.getElementById("data-table");
+            dataContainer.innerHTML = '';
+
+            for (let i = startIndex; i < endIndex && i < sampleData.length; i++) {
+                const rowData = sampleData[i];
+                const row = document.createElement("tr");
+
+                for (const key in rowData) {
+                    if (rowData.hasOwnProperty(key)) {
+                        const cell = document.createElement("td");
+                        cell.textContent = rowData[key];
+                        row.appendChild(cell);
+                    }
+                }
+
+                dataContainer.appendChild(row);
+            }
+        }
+
+function updatePageNumbers() {
+        const maxPage = Math.ceil(sampleData.length / itemsPerPage);
+        const paginationElement = document.querySelector(".pagination");
+        paginationElement.innerHTML = ''; // Clear the existing page numbers
+
+        const prevPageItem = document.createElement("li");
+        prevPageItem.className = "page-item";
+        prevPageItem.id = "prevPage"; // Add an ID to identify the "Previous" button
+        prevPageItem.innerHTML = `<a class="page-link" href="#">Previous</a>`;
+        prevPageItem.addEventListener("click", function () {
+            if (currentPage > 1) {
+                currentPage--;
+                displayData(currentPage);
+                updatePageNumbers();
+            }
+        });
+
+        paginationElement.appendChild(prevPageItem);
+
+        for (let i = 1; i <= maxPage; i++) {
+            const pageItem = document.createElement("li");
+            pageItem.className = "page-item";
+            pageItem.id = "currentPage"; // Add an ID to identify the page number
+            pageItem.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+            pageItem.addEventListener("click", function () {
+                currentPage = i;
+                displayData(currentPage);
+                updatePageNumbers();
+            });
+
+            if (i === currentPage) {
+                pageItem.classList.add("active");
+            }
+
+            paginationElement.appendChild(pageItem);
+        }
+
+        const nextPageItem = document.createElement("li");
+        nextPageItem.className = "page-item";
+        nextPageItem.id = "nextPage"; // Add an ID to identify the "Next" button
+        nextPageItem.innerHTML = `<a class="page-link" href="#">Next</a>`;
+        nextPageItem.addEventListener("click", function () {
+            if (currentPage < maxPage) {
+                currentPage++;
+                displayData(currentPage);
+                updatePageNumbers();
+            }
+        });
+
+        paginationElement.appendChild(nextPageItem);
+    }
+
+    // Update the "Next" button click event listener
+    document.getElementById("nextPage").addEventListener("click", function () {
+        const maxPage = Math.ceil(sampleData.length / itemsPerPage);
+        if (currentPage < maxPage) {
+            currentPage++;
+            displayData(currentPage);
+            updatePageNumbers(); // Update the current page number
+        }
+    });
+
+    // Update the "Previous" button click event listener
+    document.getElementById("prevPage").addEventListener("click", function () {
+        if (currentPage > 1) {
+            currentPage--;
+            displayData(currentPage);
+            updatePageNumbers(); // Update the current page number
+        }
+    });
+
+        const fetchDataAndDisplay = (documentName, subcollectionName, mode) => {
+            const tableBody = document.getElementById("data-table");
+
+            const simpleDocRef = db.collection("SimpleLeaderboard").doc(documentName);
+            const adventureDocRef = db.collection("AdventureLeaderboard").doc(documentName);
+
+            const simpleSubcollectionRef = simpleDocRef.collection(subcollectionName);
+            const adventureSubcollectionRef = adventureDocRef.collection(subcollectionName);
+
+            Promise.all([
+                simpleSubcollectionRef.get(),
+                adventureSubcollectionRef.get()
+            ]).then((results) => {
+                results.forEach((querySnapshot, index) => {
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        sampleData.push({
+                            "Game Mode": mode[index],
+                            "Grade": documentName,
+                            "Section": subcollectionName,
+                            "Player's Name": data.playerName,
+                            "Score": data.score
+                        });
+                    });
+                });
+
+                sampleData.sort((a, b) => b.Score - a.Score);
+                displayData(currentPage);
+
+                // Add the search functionality
+                const $table = $('#myTable1');
+                const $rows = $table.find('tbody tr');
+                const $searchInput = $('#searchInput');
+
+                $searchInput.on('input', function () {
+                    const searchText = $(this).val().toLowerCase();
+
+                    $rows.each(function () {
+                        const $row = $(this);
+                        const rowData = $row.text().toLowerCase();
+
+                        if (rowData.includes(searchText)) {
+                            $row.show();
+                        } else {
+                            $row.hide();
+                        }
+                    });
+                });
+            }).catch((error) => {
+                console.error("Error getting documents from subcollection '" + subcollectionName + "': ", error);
+            });
+        }
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAkQJZ0V9cru_ASGsKyPJkoDSuX7T1n3ws",
+            authDomain: "elemathary-f60bd.firebaseapp.com",
+            projectId: "elemathary-f60bd",
+            storageBucket: "elemathary-f60bd.appspot.com",
+            messagingSenderId: "340977021821",
+            appId: "1:340977021821:web:fab23da543c51bf0621214",
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        fetchDataAndDisplay("1", "Matapat", ["Simple Mode", "Adventure Mode"]);
+        fetchDataAndDisplay("1", "Masunurin", ["Simple Mode", "Adventure Mode"]);
+        fetchDataAndDisplay("2", "Mangga", ["Simple Mode", "Adventure Mode"]);
+        fetchDataAndDisplay("2", "Santol", ["Simple Mode", "Adventure Mode"]);
+        fetchDataAndDisplay("3", "Diamond", ["Simple Mode", "Adventure Mode"]);
+        fetchDataAndDisplay("3", "Jade", ["Simple Mode", "Adventure Mode"]);
+    });
+</script>
+
+    
+    <!--Script for dropdown (game mode, grade, and section)-->
+    <script>
+    // Get references to the grade and section dropdowns
+    const gradeDropdown = document.getElementById("grade-dropdown");
+    const sectionDropdown = document.getElementById("section-dropdown");
+
+    // Define the section options for each grade
+    const sectionOptions = {
+        "1": ["Matapat", "Masunurin"],
+        "2": ["Mangga", "Santol"],
+        "3": ["Diamond", "Jade"],
+    };
+
+    // Function to update the section dropdown based on the selected grade
+    function updateSectionOptions() {
+        const selectedGrade = gradeDropdown.value;
+        const sections = sectionOptions[selectedGrade] || [];
+
+        // Clear existing options
+        sectionDropdown.innerHTML = '';
+
+        // Add the default option
+        const defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.textContent = "Select Section";
+        sectionDropdown.appendChild(defaultOption);
+
+        // Add new section options
+        sections.forEach(section => {
+            const option = document.createElement("option");
+            option.value = section;
+            option.textContent = section;
+            sectionDropdown.appendChild(option);
+        });
+    }
+
+    // Add an event listener to the grade dropdown to update the section dropdown
+    gradeDropdown.addEventListener("change", updateSectionOptions);
+
+    // Initialize the section dropdown with the default options
+    updateSectionOptions();
+</script>
+
+<script>
+    document.getElementById("game-mode-dropdown").addEventListener("change", filterData);
+    document.getElementById("grade-dropdown").addEventListener("change", filterData);
+    document.getElementById("section-dropdown").addEventListener("change", filterData);
+    
+    function filterData() {
+        const selectedGameMode = document.getElementById("game-mode-dropdown").value;
+        const selectedGrade = document.getElementById("grade-dropdown").value;
+        const selectedSection = document.getElementById("section-dropdown").value;
+        const tableRows = document.querySelectorAll("#data-table tr");
+    
+        tableRows.forEach(function (row) {
+            const gameModeCell = row.cells[0]; // Assuming the "Game Mode" cell is at index 0
+            const gradeCell = row.cells[1]; // Assuming the "Grade" cell is at index 1
+            const sectionCell = row.cells[2]; // Assuming the "Section" cell is at index 2
+    
+            const gameModeMatches = selectedGameMode === "" || gameModeCell.textContent === selectedGameMode;
+            const gradeMatches = selectedGrade === "" || gradeCell.textContent === selectedGrade;
+            const sectionMatches = selectedSection === "" || sectionCell.textContent === selectedSection;
+    
+            if (gameModeMatches && gradeMatches && sectionMatches) {
+                row.style.display = ""; // Show the row
+            } else {
+                row.style.display = "none"; // Hide the row
+            }
+        });
+    }
+    </script>
+</body>
+</html>
